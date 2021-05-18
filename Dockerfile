@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM php:8.0.5-cli
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -10,53 +10,26 @@ ENV TERM xterm
 
 RUN apt-get update -y
 
-# Add the "PHP 7" ppa
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:ondrej/php
-
-
 RUN ln -snf /usr/share/zoneinfo/UTC /etc/localtime && echo UTC > /etc/timezone
+RUN apt-get install -y software-properties-common
 
-# Install "PHP Extentions", "libraries", "Software's"
-RUN apt update -y
-RUN apt upgrade -y
+RUN apt-get update && apt-get install -y --fix-missing \
+    apt-utils \
+    gnupg
 
-RUN apt install  -y php7.3-cli \
-        php7.3-common \
-        php7.3-curl \
-        php7.3-intl \
-        php7.3-json \
-        php7.3-xml \
-        php7.3-mbstring \
-        php7.3-mysql \
-        php7.3-pgsql \
-        php7.3-sqlite \
-        php7.3-sqlite3 \
-        php7.3-zip \
-        php7.3-bcmath \
-        php7.3-memcached \
-        php7.3-gd \
-        php7.3-dev
+RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
+RUN echo "deb-src http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
+RUN curl -sS --insecure https://www.dotdeb.org/dotdeb.gpg | apt-key add -
 
-RUN apt install -y pkg-config \
-        libcurl4-openssl-dev \
-        libedit-dev \
-        libssl-dev \
-        libxml2-dev \
-        xz-utils \
-        libsqlite3-dev \
-        sqlite3 \
-        git \
-        curl \
-        vim \
-        nano \
-        postgresql-client \
-    && apt-get clean
+RUN apt-get update && apt-get install -y \
+    zlib1g-dev \
+    libzip-dev
+RUN docker-php-ext-install zip mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
 
 #####################################
 # YARN NPM
 #####################################
-RUN curl -sL https://deb.nodesource.com/setup_12.x
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
 RUN apt install nodejs -y
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
@@ -72,3 +45,7 @@ RUN apt install yarn -y
 RUN curl -s http://getcomposer.org/installer | php && \
     echo "export PATH=${PATH}:/var/www/vendor/bin" >> ~/.bashrc && \
     mv composer.phar /usr/local/bin/composer
+
+RUN composer global require "squizlabs/php_codesniffer=*"
+RUN composer global require "friendsofphp/php-cs-fixer=*"
+RUN echo 'export PATH="$PATH:$HOME/.config/composer/vendor/bin"' >> ~/.bashrc
