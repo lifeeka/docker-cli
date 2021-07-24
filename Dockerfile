@@ -46,11 +46,13 @@ RUN composer global require "squizlabs/php_codesniffer=*"
 RUN composer global require "friendsofphp/php-cs-fixer=*"
 RUN echo 'export PATH="$PATH:$HOME/.config/composer/vendor/bin"' >> ~/.bashrc
 
-#####################################
-# NestJs:
-#####################################
 RUN npm install -g @nestjs/cli
 RUN npm install -g typeorm
 RUN npm install -g ts-node
+
+#####################################
+# NestJs:
+#####################################
+RUN npm install -g next
 
 WORKDIR /app
