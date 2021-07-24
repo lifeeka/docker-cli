@@ -1,12 +1,7 @@
 FROM php:8.0.5-cli
+LABEL maintainer=spmsupun@gmail.com
 
 ARG DEBIAN_FRONTEND=noninteractive
-
-ENV LANGUAGE=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-ENV LC_CTYPE=en_US.UTF-8
-ENV LANG=en_US.UTF-8
-ENV TERM xterm
 
 RUN apt-get update -y
 
@@ -29,13 +24,14 @@ RUN docker-php-ext-install zip mysqli pdo pdo_mysql && docker-php-ext-enable pdo
 #####################################
 # YARN NPM
 #####################################
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash
 RUN apt install nodejs -y
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 RUN apt update -y
 RUN apt install yarn -y
+RUN yarn config set network-timeout 600000 -g
 
 #####################################
 # Composer:
@@ -49,3 +45,12 @@ RUN curl -s http://getcomposer.org/installer | php && \
 RUN composer global require "squizlabs/php_codesniffer=*"
 RUN composer global require "friendsofphp/php-cs-fixer=*"
 RUN echo 'export PATH="$PATH:$HOME/.config/composer/vendor/bin"' >> ~/.bashrc
+
+#####################################
+# NestJs:
+#####################################
+RUN npm install -g @nestjs/cli
+RUN npm install -g typeorm
+RUN npm install -g ts-node
+
+WORKDIR /app
