@@ -10,6 +10,7 @@ RUN apt-get install -y software-properties-common
 
 RUN apt-get update && apt-get install -y --fix-missing \
     apt-utils \
+    procps \
     gnupg
 
 RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
@@ -56,16 +57,15 @@ RUN npm install -g ts-node
 RUN npm install -g next
 
 #####################################
-# Python:
+# Python
 #####################################
 RUN apt install -y python musl-dev
 RUN ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
 
-RUN apt-get update; \
-    apt-get install --no-install-recommends --no-install-suggests -q -y \
-        procps \
-        ; \
-    apt-get autoremove -y; \
+#####################################
+# Clean up
+#####################################
+RUN apt-get autoremove -y; \
     apt-get clean; \
     rm -rf \
         /var/cache/apt/archives \
