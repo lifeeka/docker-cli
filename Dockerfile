@@ -61,4 +61,18 @@ RUN npm install -g next
 RUN apt install -y python musl-dev
 RUN ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
 
+RUN apt-get update; \
+    apt-get install --no-install-recommends --no-install-suggests -q -y \
+        procps \
+        ; \
+    apt-get autoremove -y; \
+    apt-get clean; \
+    rm -rf \
+        /var/cache/apt/archives \
+        /var/cache/ldconfig/* \
+        /var/lib/apt/lists/* \
+        /var/log/alternatives.log \
+        /var/log/apt/* \
+        /var/log/dpkg.log
+
 WORKDIR /app
