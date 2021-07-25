@@ -55,4 +55,11 @@ RUN npm install -g ts-node
 #####################################
 RUN npm install -g next
 
+#####################################
+# Python:
+#####################################
+RUN apt install -y python
+RUN apt-get install musl-dev
+RUN ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
+
 WORKDIR /app
