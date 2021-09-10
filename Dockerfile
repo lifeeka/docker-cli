@@ -3,7 +3,7 @@ LABEL maintainer=spmsupun@gmail.com
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update -y
+RUN apt-get update -y --allow-releaseinfo-change
 
 RUN ln -snf /usr/share/zoneinfo/UTC /etc/localtime && echo UTC > /etc/timezone
 RUN apt-get install -y software-properties-common
